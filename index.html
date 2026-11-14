@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#981e1d">
+<meta name="description" content="消防有我，平安校园。完成 15 道消防安全知识题，逐题查看解析，答完查看总分。">
+<link rel="icon" href="data:,">
+<title>消防有我 · 平安校园｜消防安全知识闯关</title>
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #fbf3f3;
+    --ink: #312020;
+    --muted: #6c5150;
+    --line: #ebd4cf;
+    --red: #a52020;
+    --dark-red: #801313;
+    --cream: #fffdf8;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: #f4e6e3; color: var(--ink); }
+  main { margin-inline: auto; width: min(100%, 537px); min-height: 100vh; background: var(--paper); }
+  [hidden] { display: none !important; }
+  .cover-art {
+    width: 100%; aspect-ratio: 537 / 783;
+    background: url("cover.png") top center / 100% auto no-repeat;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .intro-body { padding: 18px 24px 30px; }
+  .intro-body > p { margin: 0 0 22px; font-size: 16px; line-height: 1.9; }
+  .rules {
+    padding-block: 15px; margin-bottom: 18px; display: grid;
+    grid-template-columns: 1fr 1fr; gap: 8px;
+    border-block: 1px solid var(--line); color: var(--muted); text-align: center;
+    font-size: 13px; line-height: 1.6;
+  }
+  .rules b { display: block; color: var(--ink); font-size: 15px; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid #80502c; outline-offset: 3px; }
+  .primary {
+    display: block; width: 100%; min-height: 50px; padding: 11px 16px;
+    border: 1px solid transparent; border-radius: 9px; background: var(--red);
+    color: white; font-weight: 700; text-align: center;
+  }
+  .primary:hover { background: var(--dark-red); }
+  .masthead { padding: 20px 24px; background: var(--dark-red); color: white; font-size: 16px; font-weight: 700; }
+  .quiz-body, .result-body { padding: 23px 24px 30px; }
+  .progress-label { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; color: var(--muted); font-size: 14px; }
+  .progress-track { height: 7px; background: #eed7d4; border-radius: 5px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: inherit; }
+  .phase { margin: 25px 0 8px; color: var(--red); font-size: 14px; font-weight: 700; }
+  h2 { margin: 0 0 19px; font-size: clamp(21px, 5.8vw, 26px); line-height: 1.48; }
+  h2:focus { outline: none; }
+  .options { display: grid; gap: 9px; }
+  .option {
+    display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: 11px;
+    width: 100%; min-height: 52px; padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: 9px; background: var(--cream);
+    color: var(--ink); text-align: left; line-height: 1.6; font-size: 15px;
+  }
+  .option:not([aria-disabled]):hover { border-color: var(--red); background: #fff4ed; }
+  .option[aria-disabled] { cursor: default; }
+  .letter {
+    width: 29px; height: 29px; display: grid; place-items: center;
+    background: #f4e7e2; border-radius: 5px; color: #752f27; font-weight: 700;
+  }
+  .option.correct { border-color: #43775a; background: #ecf6ec; }
+  .option.incorrect { border-color: #a53c36; background: #ffe8e3; }
+  .option.correct .letter { color: #245737; background: #d5ead8; }
+  .option.incorrect .letter { color: #862721; background: #f6d3cc; }
+  .feedback { margin: 15px 0 12px; padding: 12px 13px; border-radius: 7px; background: #f2e3dc; font-size: 14px; line-height: 1.65; }
+  .feedback:empty { display: none; }
+  .feedback strong { display: block; margin-bottom: 4px; }
+  .feedback p { margin: 0; }
+  .result-card {
+    text-align: center; border: 1px solid var(--line);
+    border-radius: 12px; background: var(--cream); padding: 23px 16px 17px;
+  }
+  .result-card h2 { margin-bottom: 4px; }
+  .total { margin: 0; color: var(--red); font-variant-numeric: tabular-nums; font-weight: 700; }
+  .total b { font-size: clamp(50px, 14vw, 68px); line-height: 1.15; }
+  .breakdown { margin: 16px 0 0; }
+  .breakdown + .primary { margin-top: 16px; }
+  .closing { margin-top: 28px; padding: 0 19px 14px; }
+  .closing-mark {
+    position: relative; z-index: 1; margin: 0 auto -8px; width: 105px; height: 82px;
+    background: url("closing-mark.png") center / contain no-repeat;
+  }
+  .closing-copy {
+    margin: 0; border: 3px solid #ed7359; background: #fcf8ea; padding: 22px 14px 15px;
+    font-size: 15px; line-height: 1.9;
+  }
+  .credits { margin: 19px 0 0; text-align: right; font-size: 14px; line-height: 1.9; color: var(--muted); }
+  .team-credit { margin: 20px 0 0; text-align: center; font-size: 14px; }
+  .closing-art { aspect-ratio: 555 / 244; width: 100%; background: url("closing-art.png") center / contain no-repeat; }
+  .references { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+  .references summary { cursor: pointer; width: fit-content; margin-left: auto; }
+  .references ul { margin: 7px 0 0; padding-left: 22px; line-height: 1.65; }
+  .references a { color: #852222; }
+  @media (max-width: 350px) {
+    .intro-body, .quiz-body, .result-body, .masthead { padding-inline: 16px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <section id="intro" aria-labelledby="intro-title">
+    <h1 id="intro-title" class="sr-only">消防有我 平安校园 · 消防安全知识闯关</h1>
+    <div class="cover-art" aria-hidden="true"></div>
+    <div class="intro-body">
+      <p>每天进出教学楼，你留意过安全出口的位置吗？宿舍里的用电习惯，有没有容易被忽略的细节？消防安全和这些日常场景息息相关。接下来，通过几道小题，看看自己对常见消防知识掌握了多少。</p>
+      <div class="rules" aria-label="计分规则">
+        <div><b>10 道单选题</b>每题 5 分</div>
+        <div><b>5 道判断题</b>每题 10 分</div>
+      </div>
+      <button class="primary" id="start" type="button">开始答题</button>
+    </div>
+  </section>
+
+  <section id="quiz" aria-labelledby="question-title" hidden>
+    <header class="masthead">消防安全知识闯关</header>
+    <div class="quiz-body">
+      <div class="progress-label">
+        <span id="position"></span>
+        <span id="current-score"></span>
+      </div>
+      <div id="progress" class="progress-track" role="progressbar" aria-label="答题进度" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <div class="phase" id="phase"></div>
+      <h2 id="question-title" tabindex="-1"></h2>
+      <div id="options" class="options" role="group" aria-labelledby="question-title"></div>
+      <div id="feedback" class="feedback" role="status" aria-live="polite" aria-atomic="true"></div>
+      <button class="primary" id="next" type="button" hidden>下一题</button>
+    </div>
+  </section>
+
+  <section id="result" aria-labelledby="result-title" hidden>
+    <header class="masthead">消防安全知识闯关</header>
+    <div class="result-body">
+      <div class="result-card">
+        <h2 id="result-title" tabindex="-1">答题完成</h2>
+        <p class="total"><b id="final-score"></b> / 100 分</p>
+        <div class="rules breakdown" aria-label="分项成绩">
+          <div><b>单选题</b><span id="single-score"></span></div>
+          <div><b>判断题</b><span id="true-false-score"></span></div>
+        </div>
+        <button class="primary" id="retry" type="button">再答一次</button>
+      </div>
+
+      <div class="closing">
+        <div class="closing-mark" aria-hidden="true"></div>
+        <p class="closing-copy">答题结束，行动从现在开始！离开宿舍前检查电源，走进教学楼时留意安全出口，发现消防隐患及时反映。把今天答过的题变成明天做得到的事，一起守护我们的校园！</p>
+        <p class="credits">题目来源｜消防安全知识题库</p>
+        <p class="team-credit">软件工程学院2024级本科生宣传小组</p>
+        <details class="references">
+          <summary>消防安全参考资料</summary>
+          <ul>
+            <li><a href="https://www.moe.gov.cn/jyb_xxgk/xxgk/zhengce/guizhang/202112/t20211206_585092.html">《高等学校消防安全管理规定》</a></li>
+            <li><a href="https://js.119.gov.cn/202512/jsxfww-menu-zxft-zxftlb_c_452355f7552843308ba2.html">应急管理部冬季安全知识发布会</a></li>
+            <li><a href="https://dorm.pku.edu.cn/sylm/gzdt/zxdt/7cf397af646d464690c94e6efc36425c.htm">北京大学学生公寓消防安全提醒</a></li>
+          </ul>
+        </details>
+      </div>
+    </div>
+    <div class="closing-art" aria-hidden="true"></div>
+  </section>
+</main>
+<script>
+  const questions = [
+    {
+      category: '宿舍用电安全', points: 5,
+      prompt: '在学生宿舍内，以下哪种用电行为存在明显安全隐患？',
+      options: ['使用符合标准的台灯', '使用合格的手机充电器', '私自使用电热锅煮食物', '使用学校允许的电脑'],
+      answer: 2, explanation: '违规使用电热器具可能造成线路过载、过热，引发火灾。'
+    },
+    {
+      category: '宿舍用电安全', points: 5,
+      prompt: '离开宿舍时，以下哪种做法最安全？',
+      options: ['让手机一直充电', '关闭不需要使用的电器并切断相应电源', '只关闭宿舍灯光', '让电热器具继续运行'],
+      answer: 1, explanation: '离开宿舍应检查电器，避免不必要的设备无人看管。'
+    },
+    {
+      category: '宿舍用电安全', points: 5,
+      prompt: '宿舍插线板的正确使用方式是？',
+      options: ['放在被褥下方便充电', '多个插线板串联使用', '将电源线缠绕在金属床架上', '放置在干燥、通风且远离可燃物的位置'],
+      answer: 3, explanation: '插线板不应覆盖、串联或靠近可燃物。'
+    },
+    {
+      category: '宿舍用电安全', points: 5,
+      prompt: '发现宿舍电线破损、插座发热或有焦糊味时，应如何处理？',
+      options: ['继续使用，观察是否恢复', '用胶带简单包裹后继续使用', '停止使用，在安全条件下断电并联系宿管或专业维修人员', '用水给插座降温'],
+      answer: 2, explanation: '异常发热、焦糊味可能预示电气故障，应及时报修。'
+    },
+    {
+      category: '宿舍用电安全', points: 5,
+      prompt: '关于电动自行车及其电池的充电，以下哪种做法正确？',
+      options: ['将电池带回宿舍充电', '从宿舍窗户私拉电线充电', '在宿舍楼楼梯间充电', '在学校指定的合规充电区域充电'],
+      answer: 3, explanation: '禁止违规入楼充电、飞线充电，应使用合规充电设施。'
+    },
+    {
+      category: '宿舍消防安全', points: 5,
+      prompt: '宿舍楼发生火灾时，正确的逃生方式是？',
+      options: ['乘坐电梯快速下楼', '在安全可通行的情况下沿疏散楼梯撤离', '返回宿舍收拾贵重物品', '躲在床底等待'],
+      answer: 1, explanation: '火灾中不应乘坐普通电梯，应选择安全疏散路线。'
+    },
+    {
+      category: '宿舍消防安全', points: 5,
+      prompt: '发现宿舍楼发生火灾，需要报警时，应拨打哪个电话？',
+      options: ['110', '120', '119', '12315'],
+      answer: 2, explanation: '火警电话为119，应说明起火地点和现场情况。'
+    },
+    {
+      category: '宿舍消防安全', points: 5,
+      prompt: '宿舍楼的疏散通道和安全出口应保持什么状态？',
+      options: ['可以临时堆放纸箱', '可以停放自行车', '可以摆放鞋柜和杂物', '始终保持畅通，不得堵塞'],
+      answer: 3, explanation: '安全出口与疏散通道必须保持畅通。'
+    },
+    {
+      category: '宿舍消防安全', points: 5,
+      prompt: '晚上宿舍停电后，以下哪种照明方式更安全？',
+      options: ['点燃蜡烛放在床边', '使用合格的充电式LED应急灯', '使用酒精灯照明', '点燃纸张照明'],
+      answer: 1, explanation: '避免在床帘、蚊帐等可燃物附近使用明火。'
+    },
+    {
+      category: '宿舍消防安全', points: 5,
+      prompt: '如果宿舍门外走廊已充满浓烟，无法确认安全撤离路线，应如何处理？',
+      options: ['立即冲进浓烟', '乘坐电梯逃生', '关闭房门、减少烟气进入，拨打119并报告被困位置等待救援', '直接从高楼窗户跳下'],
+      answer: 2, explanation: '撤离路线受阻时不应盲目穿越浓烟，应阻烟、报警并等待救援。'
+    },
+    {
+      category: '宿舍用电安全', points: 10,
+      prompt: '充电宝可以放在被褥上充电。',
+      options: ['正确', '错误'], answer: 1,
+      explanation: '应放在干燥通风、远离可燃物的位置，避免覆盖和挤压。'
+    },
+    {
+      category: '宿舍用电安全', points: 10,
+      prompt: '多个插线板串联可以解决插孔不足问题。',
+      options: ['正确', '错误'], answer: 1,
+      explanation: '串联容易增加过载及接触不良风险，应使用符合要求的供电方式。'
+    },
+    {
+      category: '宿舍消防安全', points: 10,
+      prompt: '用湿毛巾捂口鼻就可以冲过浓烟。',
+      options: ['正确', '错误'], answer: 1,
+      explanation: '湿毛巾不能防护有毒气体。路线受浓烟封堵时不要强行穿越，应关门阻烟并报告位置求救。'
+    },
+    {
+      category: '宿舍用电安全', points: 10,
+      prompt: '发现电器冒烟，任何情况下都应先冲过去拔插头。',
+      options: ['正确', '错误'], answer: 1,
+      explanation: '仅在安全、无需接近火烟或裸露线路时断电。不能安全操作时立即远离、提醒他人并报警。'
+    },
+    {
+      category: '宿舍消防安全', points: 10,
+      prompt: '可以遮挡烟感报警器以避免误报。',
+      options: ['正确', '错误'], answer: 1,
+      explanation: '不得遮挡、损坏消防设施，故障应及时报修。'
+    }
+  ];
+
+  const byId = (id) => document.querySelector('#' + id);
+  const letters = ['A', 'B', 'C', 'D'];
+  const sections = ['intro', 'quiz', 'result'];
+  const totalQuestions = questions.length;
+  const singleQuestions = questions.filter(question => question.points === 5).length;
+  let index = 0;
+  let responses = [];
+
+  function getScore(answers, start = 0, end = questions.length) {
+    return questions.slice(start, end).reduce((score, question, offset) => {
+      return score + (answers[start + offset] === question.answer ? question.points : 0);
+    }, 0);
+  }
+
+  function showSection(id, headingId) {
+    for (const section of sections) byId(section).hidden = section !== id;
+    if (headingId) byId(headingId).focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+
+  function updateProgress() {
+    byId('current-score').textContent = '当前得分 ' + getScore(responses) + ' 分';
+    byId('progress').setAttribute('aria-valuenow', responses.length);
+    byId('progress-fill').style.width = (responses.length / totalQuestions * 100) + '%';
+  }
+
+  function showQuestion() {
+    const question = questions[index];
+    const isSingle = question.options.length === 4;
+    byId('position').textContent = '第 ' + (index + 1) + ' 题 / 共 ' + totalQuestions + ' 题';
+    byId('phase').textContent = (isSingle ? '单选题' : '判断题') + ' · ' + question.points + ' 分 · ' + question.category;
+    byId('question-title').textContent = question.prompt;
+    byId('feedback').replaceChildren();
+    byId('next').hidden = true;
+    byId('next').textContent = index === totalQuestions - 1 ? '查看成绩' : '下一题';
+    const optionButtons = question.options.map((option, optionIndex) => {
+      const button = document.createElement('button');
+      const letter = document.createElement('span');
+      const label = document.createElement('span');
+      button.type = 'button';
+      button.className = 'option';
+      letter.className = 'letter';
+      letter.textContent = isSingle ? letters[optionIndex] : (optionIndex === 0 ? '对' : '错');
+      letter.setAttribute('aria-hidden', 'true');
+      label.textContent = option;
+      button.append(letter, label);
+      button.addEventListener('click', () => answerQuestion(optionIndex));
+      return button;
+    });
+    byId('options').replaceChildren(...optionButtons);
+    updateProgress();
+    showSection('quiz', 'question-title');
+  }
+
+  function answerQuestion(optionIndex) {
+    if (responses.length !== index) return;
+    const question = questions[index];
+    responses.push(optionIndex);
+    const isCorrect = optionIndex === question.answer;
+    const buttons = byId('options').children;
+    for (const button of buttons) button.setAttribute('aria-disabled', 'true');
+    buttons[question.answer].classList.add('correct');
+    if (!isCorrect) buttons[optionIndex].classList.add('incorrect');
+    const feedbackTitle = document.createElement('strong');
+    const explanation = document.createElement('p');
+    const correctLabel = question.options.length === 4
+      ? letters[question.answer] + '．' + question.options[question.answer]
+      : question.options[question.answer];
+    feedbackTitle.textContent = isCorrect ? '回答正确 · +' + question.points + ' 分' : '回答错误。正确答案：' + correctLabel;
+    explanation.textContent = question.explanation;
+    byId('feedback').replaceChildren(feedbackTitle, explanation);
+    updateProgress();
+    byId('next').hidden = false;
+  }
+
+  function showResult() {
+    byId('final-score').textContent = getScore(responses);
+    byId('single-score').textContent = getScore(responses, 0, singleQuestions) + ' / 50 分';
+    byId('true-false-score').textContent = getScore(responses, singleQuestions) + ' / 50 分';
+    showSection('result', 'result-title');
+  }
+
+  function start() {
+    index = 0;
+    responses = [];
+    showQuestion();
+  }
+
+  byId('start').addEventListener('click', start);
+  byId('retry').addEventListener('click', start);
+  byId('next').addEventListener('click', () => {
+    if (responses.length !== index + 1) return;
+    index += 1;
+    if (index === totalQuestions) showResult();
+    else showQuestion();
+  });
+</script>
+</body>
+</html>
